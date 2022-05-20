@@ -7,12 +7,6 @@ module.exports = {
     host: process.env.DBHOST,
     logging: false,
     dialect: "postgres",
-    // dialectOptions: {
-    //   ssl: {
-    //     sslmode: "require",
-    //     rejectUnauthorized: false,
-    //   },
-    // }
   },
   test: {
     username: process.env.DBUSER_TEST,

@@ -1,4 +1,3 @@
-const Doctor = require("../models").Doctor
 const { NamesArray, Specialization, Hospitals } = require("./Data")
 const { faker } = require("@faker-js/faker");
 const ObjectsToCsv = require('objects-to-csv');
@@ -6,6 +5,7 @@ const ObjectsToCsv = require('objects-to-csv');
 
 module.exports.GetData = async (_req, res) => {
     
+    //Generate 30000 dummy records
     const getDoctor = () => {
         let fakeName = faker.name.findName();
         let splited = fakeName.split(" ");
@@ -48,6 +48,11 @@ module.exports.GetData = async (_req, res) => {
    
 }
 
+
+
+
+
+//Get 30000 Random Specializations
 function getSpecialization() {
     let specList = []
     for (let i = 1; i < 30001; i++) {
@@ -58,6 +63,7 @@ function getSpecialization() {
     return { count, specList }
 }
 
+//Get 30000 Random Ages from 25 to 70
 function getAge() {
     let max = 70;
     let min = 25;
@@ -72,6 +78,8 @@ function getAge() {
     return { count, ageList }
 
 }
+
+//Get 30000 Random Years from 1970 to 2020
 
 function getPracticeYear() {
     let max = 2020;
@@ -88,6 +96,8 @@ function getPracticeYear() {
 
 }
 
+//Get 30000 Random emails (not working mails)
+
 function getEmails() {
 
     let initMail = "workmail";
@@ -100,6 +110,9 @@ function getEmails() {
     let count = emailList.length
     return { count, emailList }
 }
+
+//Get 30000 Random Names Using a combination of the names in the NameList
+//No Repeat
 
 function getNames() {
     var nameListAll = []
@@ -123,7 +136,4 @@ function getNames() {
     return { count, nameList }
 }
 
-// module.exports.GetData = async(_req, res) => {
-
-// }
 

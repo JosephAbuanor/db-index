@@ -5,3 +5,5 @@
 # db-index
 
 # Hitting the /query endpoint runs the function in GetData controller. You may also extract function from endpoint and run using node command in cmd.
+
+# Records are created in doctor.csv file in root directory

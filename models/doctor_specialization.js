@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class Doc extends Model {
+  class Doctor_specialization extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -11,25 +11,25 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Doctor_specialization.belongsTo(models.Doctor,{
+        foreignKey: "doctorId",
+        onDelete: "CASCADE"
+      });
+
+      Doctor_specialization.belongsTo(models.Specialization,{
+        foreignKey: "specializationId",
+        onDelete:"CASCADE"
+      });
     }
   };
-  Doc.init({
-    email: DataTypes.STRING,
-    name: DataTypes.STRING,
-    age: DataTypes.STRING,
-    specialization: DataTypes.STRING,
-    practiceYear: DataTypes.STRING,
-    country: DataTypes.STRING,
-    state: DataTypes.STRING,
-    city: DataTypes.STRING,
-    zip: DataTypes.STRING,
-    hospital: DataTypes.STRING
+  Doctor_specialization.init({
+    practiceYear: DataTypes.INTEGER,
   }, {
     sequelize,
-    modelName: 'Doc',
+    modelName: 'Doctor_specialization',
     timestamps: false,
     createdAt: false,
     updatedAt: false,
   });
-  return Doc;
+  return Doctor_specialization;
 };

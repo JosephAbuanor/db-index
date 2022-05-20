@@ -1,12 +1,20 @@
-const Doctor = require("../models").Doctor
-const { NamesArray, Specialization, Hospitals } = require("./Data")
+const { Specialization, Hospitals } = require("./Data")
 const { faker } = require("@faker-js/faker");
 const ObjectsToCsv = require('objects-to-csv');
-
-
+const Doctor = require("../models").Doctor
+const Hospital = require("../models").Hospital
+const SpecializationModel = require("../models").Specialization
 module.exports.GetData = async (_req, res) => {
-    
-    const getDoctor = () => {
+
+    createDocSpecialization()
+
+    return res.status(200).send({ message: "success" })
+
+}
+
+
+function getDocs() {
+    const createDoctor = () => {
         let fakeName = faker.name.findName();
         let splited = fakeName.split(" ");
         let firstName;
@@ -19,111 +27,108 @@ module.exports.GetData = async (_req, res) => {
             lastName = splited[2];
         }
         return {
+            id: faker.datatype.uuid(),
             name: fakeName,
             email: faker.internet.email(firstName, lastName),
             age: faker.datatype.number({
                 min: 25,
                 max: 70,
             }),
-            specialization: Specialization[Math.floor(Math.random() * Specialization.length)].toString(),
-            practiceYear: faker.datatype.number({
-                min: 1970,
-                max: 2020,
-            }),
-            country: "Germany",
-            state: "State",
-            city: Hospitals[Math.floor(Math.random() * Hospitals.length)].City,
-            zip: Hospitals[Math.floor(Math.random() * Hospitals.length)].Postcode,
-            hospital: Hospitals[Math.floor(Math.random() * Hospitals.length)].Name
         };
     };
-    
+
     let doctors = []
     for (let i = 1; i <= 30000; i++) {
-        doctors.push({...getDoctor() })
+        doctors.push({ ...createDoctor() })
     }
     new ObjectsToCsv(doctors).toDisk('./doctor.csv');
-    
-    return res.status(200).send("success")
-   
 }
 
 function getSpecialization() {
     let specList = []
-    for (let i = 1; i < 30001; i++) {
-        let specPos = Math.floor(Math.random() * Specialization.length)
-        specList.push(Specialization[specPos].toString())
+
+    for (let specialization of Specialization) {
+        specList.push({ specialization })
     }
-    let count = specList.length
-    return { count, specList }
+    new ObjectsToCsv(specList).toDisk('./doctor.csv')
 }
 
-function getAge() {
-    let max = 70;
-    let min = 25;
-    let ageList = []
+function getHospitals() {
+    let hospitalList = []
 
-    for (let i = 1; i < 30001; i++) {
-        let randomAge = Math.floor(Math.random() * (max - min + 1) + min)
-        ageList.push(randomAge)
-    }
-
-    let count = ageList.length
-    return { count, ageList }
-
-}
-
-function getPracticeYear() {
-    let max = 2020;
-    let min = 1970;
-    let yearList = []
-
-    for (let i = 1; i < 30001; i++) {
-        let randomYear = Math.floor(Math.random() * (max - min + 1) + min)
-        yearList.push(randomYear)
-    }
-
-    let count = yearList.length
-    return { count, yearList }
-
-}
-
-function getEmails() {
-
-    let initMail = "workmail";
-    var emailList = []
-    for (let i = 1; i < 30001; i++) {
-        let email = initMail + i + "@gmail.com"
-        emailList.push(email)
-    }
-
-    let count = emailList.length
-    return { count, emailList }
-}
-
-function getNames() {
-    var nameListAll = []
-    for (let fName of NamesArray) {
-        let randomFirstName = fName
-
-        for (let lName of NamesArray) {
-            let randomLastName = lName
-
-            if (randomFirstName !== randomLastName) {
-                let fullName = (randomFirstName + " " + randomLastName).toString();
-                if (!nameListAll.includes(fullName)) {
-                    nameListAll.push(fullName)
-                }
+    for (let hospital of Hospitals) {
+        hospitalList.push(
+            {
+                name: hospital.Name,
+                zip: hospital.Postcode,
+                city: hospital.City,
+                state: "State",
+                country: "Germany"
             }
-        }
+        )
     }
-
-    let nameList = nameListAll.splice(102)
-    let count = nameList.length
-    return { count, nameList }
+    new ObjectsToCsv(hospitalList).toDisk('./doctor.csv')
 }
 
-// module.exports.GetData = async(_req, res) => {
+async function createDocHospital() {
 
-// }
+    let dhArray = [];
+
+    let hospitalArray = await Hospital.findAll().catch((error) => { return ({ "message": "failed to fetch hospitals", error }) })
+    let randomHospital = ""
+    await Doctor.findAll().then(
+        (allDoctors) => {
+
+            allDoctors.forEach(doctor => {
+
+                for (let i = 0; i < 3; i++) {
+
+                    randomHospital = hospitalArray[Math.floor(Math.random() * hospitalArray.length)]
+
+                    dhArray.push({
+                        doctorId: doctor.id,
+                        hospitalId: randomHospital.id
+                    })
+                }
+            });
+
+            new ObjectsToCsv(dhArray).toDisk('./doctor.csv')
+
+        }).catch((error) => { return ({ "message": "failed to fetch doctors", error }) })
+
+}
+
+async function createDocSpecialization() {
+
+    let dsArray = [];
+
+    let specializationArray = await SpecializationModel.findAll().catch((error) => { return ({ "message": "failed to fetch specialization", error }) })
+    let randomSpecialization = ""
+    await Doctor.findAll().then(
+        (allDoctors) => {
+
+            allDoctors.forEach(doctor => {
+
+                for (let i = 0; i < 3; i++) {
+
+                    randomSpecialization = specializationArray[Math.floor(Math.random() * specializationArray.length)]
+
+                    dsArray.push({
+                        doctorId: doctor.id,
+                        specializationId: randomSpecialization.id,
+                        practiceYear: faker.datatype.number({
+                            min: 1970,
+                            max: 2020,
+                        }),
+                    })
+                }
+            });
+
+            new ObjectsToCsv(dsArray).toDisk('./doctor.csv')
+
+        }).catch((error) => { return ({ "message": "failed to fetch doctors", error }) })
+
+}
+
+
 

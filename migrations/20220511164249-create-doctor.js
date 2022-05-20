@@ -4,14 +4,14 @@ module.exports = {
     await queryInterface.createTable('Doctors', {
       id: {
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
-      },
-      email: {
-        type: Sequelize.STRING
+        defaultValue: Sequelize.UUIDV4,
+        type: Sequelize.UUID,
       },
       name: {
+        type: Sequelize.STRING
+      },
+      email: {
         type: Sequelize.STRING
       },
       age: {

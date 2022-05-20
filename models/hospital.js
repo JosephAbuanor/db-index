@@ -11,6 +11,10 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Hospital.hasMany(models.Doctor_hospital,{
+        foreignKey: "hospitalId",
+        onDelete:"CASCADE"
+      });
     }
   };
   Hospital.init({
@@ -22,6 +26,9 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Hospital',
+    timestamps: false,
+    createdAt: false,
+    updatedAt: false,
   });
   return Hospital;
 };

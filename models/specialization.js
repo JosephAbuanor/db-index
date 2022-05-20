@@ -11,13 +11,20 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Specialization.hasMany(models.Doctor_specialization,{
+        foreignKey: "specializationId",
+        onDelete:"CASCADE"
+      });
     }
-  };
+  }
   Specialization.init({
     name: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Specialization',
+    timestamps: false,
+    createdAt: false,
+    updatedAt: false,
   });
   return Specialization;
 };
